@@ -1,6 +1,7 @@
 import { createTheme } from "@material-ui/core";
 import { ThemeProvider } from "@material-ui/styles";
 import { createContext, Dispatch, FC, ReactNode, useState } from "react";
+import { AuthContextProvider } from "src/context/AuthContext";
 
 interface ThemeContextType {
   isDark: boolean;
@@ -34,9 +35,11 @@ export const ThemeContextProvider: FC<Props> = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{ isDark, setIsDark }}>
-      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-        {children}
-      </ThemeProvider>
+      <AuthContextProvider>
+        <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+          {children}
+        </ThemeProvider>
+      </AuthContextProvider>
     </ThemeContext.Provider>
   );
 };

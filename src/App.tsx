@@ -1,20 +1,18 @@
 import { Box, Grid } from "@material-ui/core";
 import { Header } from "./components/Header";
-import { ManageFolders } from "./components/ManageFolders";
-import { Upload } from "./components/Upload";
+import { SignIn } from "./pages/SignIn";
+// import { SignUp } from "./pages/SignUp";
 
 export const App = () => {
   return (
     <Box overflow="hidden">
-      <Grid container spacing={2}>
+      <Grid container>
         <Grid item xs={12}>
           <Header />
         </Grid>
         <Grid item xs={12}>
-          <Upload />
-        </Grid>
-        <Grid item xs={12}>
-          <ManageFolders />
+          {/* <SignUp /> */}
+          <SignIn />
         </Grid>
       </Grid>
     </Box>
