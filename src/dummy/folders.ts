@@ -6,3 +6,5 @@ export const folderNames = [
   "Movies",
   "TV Shows",
 ];
+
+// export const folderNames = [];

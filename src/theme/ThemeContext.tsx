@@ -18,7 +18,17 @@ interface Props {
 export const ThemeContextProvider: FC<Props> = ({ children }) => {
   const [isDark, setIsDark] = useState(false);
 
-  const lightTheme = createTheme({});
+  const lightTheme = createTheme({
+    overrides: {
+      MuiCssBaseline: {
+        "@global": {
+          "*::-webkit-scrollbar": {
+            display: "none",
+          },
+        },
+      },
+    },
+  });
 
   const darkTheme = createTheme();
 
