@@ -59,7 +59,7 @@ export const ManageFolders = () => {
               </Grid>
               {folderNames.length > 0 &&
                 folderNames.map((folderName) => (
-                  <Grid item xs={12}>
+                  <Grid item xs={12} key={folderName}>
                     <Box
                       display="flex"
                       justifyContent="space-between"

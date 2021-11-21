@@ -1,4 +1,4 @@
-import { createContext, FC, ReactNode, useState } from "react";
+import { createContext, FC, ReactNode, useEffect, useState } from "react";
 import { auth, db } from "src/firebase";
 
 interface UserType {
@@ -7,29 +7,34 @@ interface UserType {
   email: string | null | undefined;
 }
 
-interface AuthContextType {
-  user: UserType | null;
-  AuthState: (type: string, payload: any) => void;
+interface SignUpUserType {
+  name: string;
+  email: string;
+  password: string;
 }
 
-export const AuthContext = createContext({} as AuthContextType);
+interface LoginUserType {
+  email: string;
+  password: string;
+}
+
+interface AuthStateType {
+  type: "SIGNUP" | "SIGNIN" | "SIGNOUT";
+  payload: SignUpUserType | LoginUserType | null;
+}
+
+interface AuthContextType {
+  user: UserType | null;
+  AuthState: ({ type, payload }: AuthStateType) => void;
+}
 
 interface AuthContextProps {
   children: ReactNode;
 }
 
+export const AuthContext = createContext({} as AuthContextType);
+
 export const AuthContextProvider: FC<AuthContextProps> = ({ children }) => {
-  interface SignUpUserType {
-    name: string;
-    email: string;
-    password: string;
-  }
-
-  interface LoginUserType {
-    email: string;
-    password: string;
-  }
-
   const [user, setUser] = useState<UserType | null>(null);
 
   const signUpNewUser = async (payload: SignUpUserType) => {
@@ -64,16 +69,31 @@ export const AuthContextProvider: FC<AuthContextProps> = ({ children }) => {
     }
   };
 
-  const AuthState = (type: string, payload: any) => {
+  const signOutUser = () => {
+    auth.signOut();
+    setUser(null);
+  };
+
+  const AuthState = ({ type, payload }: AuthStateType) => {
     switch (type) {
       case "SIGNUP":
-        signUpNewUser(payload);
-        break;
+        return signUpNewUser(payload as SignUpUserType);
       case "SIGNIN":
-        signInUser(payload);
-        break;
+        return signInUser(payload as LoginUserType);
+      case "SIGNOUT":
+        return signOutUser();
     }
   };
+
+  useEffect(() => {
+    auth.onAuthStateChanged((authUser) => {
+      if (!authUser) return;
+      setUser({
+        name: authUser.displayName,
+        email: authUser.email,
+      });
+    });
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, AuthState }}>

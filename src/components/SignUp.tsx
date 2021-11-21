@@ -3,12 +3,12 @@ import {
   Button,
   Container,
   Grid,
+  makeStyles,
   Paper,
   TextField,
   Typography,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
-import { useState, useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "src/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -17,25 +17,33 @@ const useStyles = makeStyles({
     marginBottom: "8px",
     marginLeft: "5px",
   },
-  signUpTxt: {
+  signInTxt: {
     display: "flex",
     justifyContent: "center",
   },
 });
 
-export const SignIn = () => {
+export const SignUp = () => {
   const classes = useStyles();
 
-  const navigate = useNavigate();
-
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
 
   const { AuthState } = useContext(AuthContext);
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    AuthState({ type: "SIGNIN", payload: { email, password } });
+    AuthState({
+      type: "SIGNUP",
+      payload: {
+        name,
+        email,
+        password,
+      },
+    });
   };
 
   return (
@@ -56,8 +64,20 @@ export const SignIn = () => {
                     color="textPrimary"
                     className={classes.title}
                   >
-                    Login
+                    Sign Up
                   </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Name"
+                    placeholder="Please enter your name"
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                    fullWidth
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
@@ -84,15 +104,15 @@ export const SignIn = () => {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </Grid>
-                <Grid item xs={12} className={classes.signUpTxt}>
+                <Grid item xs={12} className={classes.signInTxt}>
                   <Typography variant="body2">
-                    <span>Don't have an account?</span>
+                    <span>Already have an account?</span>
                     <Button
                       color="primary"
                       variant="text"
-                      onClick={() => navigate("/signup")}
+                      onClick={() => navigate("/")}
                     >
-                      Sign Up
+                      Sign In
                     </Button>
                   </Typography>
                 </Grid>
@@ -104,7 +124,7 @@ export const SignIn = () => {
                     fullWidth
                     onClick={(e) => handleSubmit(e)}
                   >
-                    Login
+                    Sign Up
                   </Button>
                 </Grid>
               </Grid>

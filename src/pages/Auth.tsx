@@ -1,8 +1,8 @@
 import { Box, Grid } from "@material-ui/core";
-import { SignUp as SignUpComp } from "src/components/SignUp";
+import { SignIn } from "./SignIn";
 import { Header } from "src/components/Header";
 
-export const SignUp = () => {
+export const Auth = () => {
   return (
     <Box overflow="hidden">
       <Grid container>
@@ -10,7 +10,7 @@ export const SignUp = () => {
           <Header />
         </Grid>
         <Grid item xs={12}>
-          <SignUpComp />
+          <SignIn />
         </Grid>
       </Grid>
     </Box>

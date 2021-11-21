@@ -1,20 +1,34 @@
-import { Box, Grid } from "@material-ui/core";
-import { Header } from "./components/Header";
-import { SignIn } from "./pages/SignIn";
-// import { SignUp } from "./pages/SignUp";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
+import { Home } from "./pages/Home";
+import { Auth } from "./pages/Auth";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { SignUp } from "./pages/SignUp";
 
 export const App = () => {
+  const { user } = useContext(AuthContext);
+
   return (
-    <Box overflow="hidden">
-      <Grid container>
-        <Grid item xs={12}>
-          <Header />
-        </Grid>
-        <Grid item xs={12}>
-          {/* <SignUp /> */}
-          <SignIn />
-        </Grid>
-      </Grid>
-    </Box>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          user ? (
+            <Navigate replace to="/home" />
+          ) : (
+            <Navigate replace to="/signin" />
+          )
+        }
+      />
+      <Route
+        path="/home"
+        element={user ? <Home /> : <Navigate replace to="/" />}
+      />
+      <Route
+        path="/signin"
+        element={user ? <Navigate replace to="/" /> : <Auth />}
+      />
+      <Route path="/signup" element={user ? <Navigate to="/" /> : <SignUp />} />
+    </Routes>
   );
 };
