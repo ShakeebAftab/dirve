@@ -8,9 +8,8 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-
-// Dummy
-import { folderNames } from "src/dummy/folders";
+import { useContext, useState } from "react";
+import { AppContext } from "src/context/AppContext";
 
 const useStyles = makeStyles({
   paper: {
@@ -27,6 +26,23 @@ const useStyles = makeStyles({
 
 export const ManageFolders = () => {
   const classes = useStyles();
+  const [name, setName] = useState("");
+
+  const { AppState, folderNames } = useContext(AppContext);
+
+  const createNewFolder = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    AppState({
+      type: "CREATEFOLDER",
+      payload: {
+        name,
+      },
+    });
+    setName("");
+  };
+
   return (
     <Box overflow="hidden">
       <Container maxWidth="md">
@@ -45,6 +61,8 @@ export const ManageFolders = () => {
                   fullWidth
                   size="small"
                   variant="outlined"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -53,13 +71,14 @@ export const ManageFolders = () => {
                   variant="outlined"
                   color="primary"
                   fullWidth
+                  onClick={(e) => createNewFolder(e)}
                 >
                   Create New Folder
                 </Button>
               </Grid>
-              {folderNames.length > 0 &&
+              {folderNames &&
                 folderNames.map((folderName) => (
-                  <Grid item xs={12} key={folderName}>
+                  <Grid item xs={12} key={folderName.id}>
                     <Box
                       display="flex"
                       justifyContent="space-between"
@@ -71,7 +90,7 @@ export const ManageFolders = () => {
                         variant="body1"
                         className={classes.folderName}
                       >
-                        {folderName}
+                        {folderName.name}
                       </Typography>
                       <Box display="flex">
                         <Button variant="outlined" size="small" color="primary">

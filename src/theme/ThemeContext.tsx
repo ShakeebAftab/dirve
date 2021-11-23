@@ -3,6 +3,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import { createContext, Dispatch, FC, ReactNode, useState } from "react";
 import { AuthContextProvider } from "src/context/AuthContext";
 import { BrowserRouter } from "react-router-dom";
+import { AppContextProvider } from "src/context/AppContext";
 
 interface ThemeContextType {
   isDark: boolean;
@@ -37,9 +38,11 @@ export const ThemeContextProvider: FC<Props> = ({ children }) => {
   return (
     <ThemeContext.Provider value={{ isDark, setIsDark }}>
       <AuthContextProvider>
-        <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-          <BrowserRouter>{children}</BrowserRouter>
-        </ThemeProvider>
+        <AppContextProvider>
+          <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+            <BrowserRouter>{children}</BrowserRouter>
+          </ThemeProvider>
+        </AppContextProvider>
       </AuthContextProvider>
     </ThemeContext.Provider>
   );

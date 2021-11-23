@@ -8,17 +8,15 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useContext, useRef, useState } from "react";
+import prettyBytes from "pretty-bytes";
 
 // Components
 import { FolderSelector } from "./FolderSelector";
 
 // Static
 import fileIcon from "../static/fileIcon.png";
-
-// Dummy Data
-import { folderNames } from "../dummy/folders";
-import prettyBytes from "pretty-bytes";
+import { AppContext } from "src/context/AppContext";
 
 const useStyles = makeStyles({
   paper: {
@@ -40,11 +38,13 @@ const useStyles = makeStyles({
 export const Upload = () => {
   const classes = useStyles();
 
+  const { folderNames } = useContext(AppContext);
+
   // State
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
-  const [folder, setFolder] = useState(
-    folderNames.length > 0 ? folderNames[0] : ""
+  const [folder, setFolder] = useState<any>(
+    folderNames && folderNames.length > 0 ? folderNames[0].name : ""
   );
   const [file, setFile] = useState<
     Blob | Uint8Array | ArrayBuffer | null | any
@@ -71,7 +71,7 @@ export const Upload = () => {
                   Upload a new file
                 </Typography>
               </Grid>
-              {folderNames.length > 0 ? (
+              {folderNames ? (
                 <>
                   <Grid item xs={12}>
                     <TextField

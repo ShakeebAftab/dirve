@@ -2,7 +2,7 @@ import { createContext, FC, ReactNode, useEffect, useState } from "react";
 import { auth, db } from "src/firebase";
 
 interface UserType {
-  dbId?: string;
+  dbId?: string | null | undefined;
   name: string | null | undefined;
   email: string | null | undefined;
 }
@@ -19,7 +19,7 @@ interface LoginUserType {
 }
 
 interface AuthStateType {
-  type: "SIGNUP" | "SIGNIN" | "SIGNOUT";
+  type: "SIGNUP" | "SIGNIN" | "SIGNOUT" | "SETUSERID";
   payload: SignUpUserType | LoginUserType | null;
 }
 
@@ -74,6 +74,19 @@ export const AuthContextProvider: FC<AuthContextProps> = ({ children }) => {
     setUser(null);
   };
 
+  const setUserId = async () => {
+    const dataUser = await db
+      .collection("users")
+      .where("email", "==", user?.email)
+      .get();
+    const data = dataUser.docs[0].id;
+    setUser({
+      dbId: data,
+      name: user?.name,
+      email: user?.email,
+    });
+  };
+
   const AuthState = ({ type, payload }: AuthStateType) => {
     switch (type) {
       case "SIGNUP":
@@ -82,6 +95,8 @@ export const AuthContextProvider: FC<AuthContextProps> = ({ children }) => {
         return signInUser(payload as LoginUserType);
       case "SIGNOUT":
         return signOutUser();
+      case "SETUSERID":
+        return setUserId();
     }
   };
 

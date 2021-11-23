@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 import { Home } from "./pages/Home";
-import { Auth } from "./pages/Auth";
+import { SignIn } from "./pages/SignIn";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { SignUp } from "./pages/SignUp";
 
@@ -26,7 +26,7 @@ export const App = () => {
       />
       <Route
         path="/signin"
-        element={user ? <Navigate replace to="/" /> : <Auth />}
+        element={user ? <Navigate replace to="/" /> : <SignIn />}
       />
       <Route path="/signup" element={user ? <Navigate to="/" /> : <SignUp />} />
     </Routes>
