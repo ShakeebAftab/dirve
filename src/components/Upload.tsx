@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   Grid,
   makeStyles,
@@ -8,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { ChangeEvent, useContext, useRef, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import prettyBytes from "pretty-bytes";
 
 // Components
@@ -38,7 +39,7 @@ const useStyles = makeStyles({
 export const Upload = () => {
   const classes = useStyles();
 
-  const { folderNames } = useContext(AppContext);
+  const { AppState, folderNames, uploadStatus } = useContext(AppContext);
 
   // State
   const [name, setName] = useState("");
@@ -49,11 +50,37 @@ export const Upload = () => {
   const [file, setFile] = useState<
     Blob | Uint8Array | ArrayBuffer | null | any
   >(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [uploadCount, setUploadCount] = useState(0);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFile(e.target.files ? e.target.files[0] : null);
+  };
+
+  useEffect(() => {
+    setLoading(uploadStatus === "ONGOING");
+    setSuccess(uploadStatus === "SUCCESS");
+  }, [uploadStatus]);
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    if (!file || !folder) return;
+    AppState({
+      type: "UPLOADFILE",
+      payload: {
+        name: name === "" ? file.name : name,
+        desc,
+        folderName: folder,
+        file,
+      },
+    });
+    setName("");
+    setDesc("");
+    setFile(null);
+    setUploadCount((uploadCount) => uploadCount + 1);
   };
 
   return (
@@ -154,10 +181,52 @@ export const Upload = () => {
                       fullWidth
                       variant="outlined"
                       color="primary"
+                      onClick={(e) => handleSubmit(e)}
                     >
                       Upload
                     </Button>
                   </Grid>
+                  {loading ? (
+                    <Grid item xs={12}>
+                      <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        p="10px"
+                      >
+                        <CircularProgress color="primary" />
+                      </Box>
+                    </Grid>
+                  ) : (
+                    uploadCount > 0 &&
+                    (success ? (
+                      <Grid item xs={12}>
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          alignItems="center"
+                          p="10px"
+                        >
+                          <Typography variant="body1" color="primary">
+                            File uploaded successfully!
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    ) : (
+                      <Grid item xs={12}>
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          alignItems="center"
+                          p="10px"
+                        >
+                          <Typography variant="body1" color="error">
+                            Error! Please try again later.
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    ))
+                  )}
                 </>
               ) : (
                 <Grid item xs={12}>

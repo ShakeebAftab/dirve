@@ -37,8 +37,7 @@ export const AuthContext = createContext({} as AuthContextType);
 export const AuthContextProvider: FC<AuthContextProps> = ({ children }) => {
   const [user, setUser] = useState<UserType | null>(null);
 
-  const signUpNewUser = async (payload: SignUpUserType) => {
-    const { name, email, password } = payload;
+  const signUpNewUser = async ({ name, email, password }: SignUpUserType) => {
     try {
       await auth.createUserWithEmailAndPassword(email, password);
       await auth.currentUser?.updateProfile({ displayName: name });

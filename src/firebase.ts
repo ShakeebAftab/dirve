@@ -1,17 +1,15 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+import firebase from "firebase";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_APIKEY,
-  authDomain: "somerandomdrive.firebaseapp.com",
-  projectId: "somerandomdrive",
-  storageBucket: "somerandomdrive.appspot.com",
-  messagingSenderId: "806218332702",
-  appId: "1:806218332702:web:3bc540f9f078f23fbacc0f",
-  measurementId: "G-MD1YQ2FEVH",
+  authDomain: "somestoragedrive.firebaseapp.com",
+  projectId: "somestoragedrive",
+  storageBucket: "somestoragedrive.appspot.com",
+  messagingSenderId: "661364420882",
+  appId: "1:661364420882:web:e2dabcec1885b6daaf43cb",
 };
 
-export const firebaseApp = firebase.initializeApp(firebaseConfig);
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+export const db = firebaseApp.firestore();
 export const auth = firebase.auth();
-export const db = firebase.firestore();
+export const storageBucket = firebase.storage();

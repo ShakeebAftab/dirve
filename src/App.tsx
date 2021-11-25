@@ -4,6 +4,7 @@ import { Home } from "./pages/Home";
 import { SignIn } from "./pages/SignIn";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { SignUp } from "./pages/SignUp";
+import { Folder } from "./pages/Folder";
 
 export const App = () => {
   const { user } = useContext(AuthContext);
@@ -29,6 +30,10 @@ export const App = () => {
         element={user ? <Navigate replace to="/" /> : <SignIn />}
       />
       <Route path="/signup" element={user ? <Navigate to="/" /> : <SignUp />} />
+      <Route
+        path="/folder/:id"
+        element={user ? <Folder /> : <Navigate to="/" />}
+      />
     </Routes>
   );
 };
