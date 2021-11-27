@@ -85,6 +85,7 @@ export const ManageFolders = () => {
                       borderColor="#808080"
                       borderBottom="1px solid black"
                       p="5px"
+                      overflow="scroll"
                     >
                       <Typography
                         variant="body1"

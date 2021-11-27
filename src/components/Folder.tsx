@@ -1,7 +1,9 @@
+import { Box } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { AuthContext } from "src/context/AuthContext";
 import { db } from "src/firebase";
+import { FolderTable } from "./FolderTable";
 
 export const Folder = () => {
   const { user } = useContext(AuthContext);
@@ -28,5 +30,5 @@ export const Folder = () => {
       });
   }, [id, user]);
 
-  return <div>{files && files.map((file: any) => <p>{file.name}</p>)}</div>;
+  return <Box overflow="hidden">{files && <FolderTable files={files} />}</Box>;
 };

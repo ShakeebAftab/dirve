@@ -9,16 +9,33 @@ import {
 } from "react";
 import { db, storageBucket } from "src/firebase";
 import { AuthContext } from "./AuthContext";
+import { v4 as uuid } from "uuid";
 
 interface CreateNewFolderType {
   name: string;
 }
 
+interface RenameFileType {
+  fileId: string;
+  name: string;
+}
+
 type UploadStatusType = "ERROR" | "ONGOING" | "SUCCESS";
 
+interface DeleteFileType {
+  fileId: string;
+  fileName: string;
+}
+
 interface AppStateType {
-  type: "CREATEFOLDER" | "RENAMEFOLDER" | "DELETEFOLDER" | "UPLOADFILE";
-  payload: any | CreateNewFolderType;
+  type:
+    | "CREATEFOLDER"
+    | "RENAMEFOLDER"
+    | "DELETEFOLDER"
+    | "UPLOADFILE"
+    | "RENAMEFILE"
+    | "DELETEFILE";
+  payload: any | CreateNewFolderType | RenameFileType | DeleteFileType;
 }
 
 interface FolderType {
@@ -107,14 +124,13 @@ export const AppContextProvider: FC<Props> = ({ children }) => {
     folderName,
     file,
   }: UploadFileType) => {
-    // TODO: Add uuid v4
-    // TODO: Loading and Error edge cases
     setUploadStatus("ONGOING");
     if (!name || !folderName || !file || !user) return;
     const folder = folders?.find((folder) => folder.name === folderName);
     if (!folder) return;
     const storageRef = storageBucket.ref();
-    const fileRef = storageRef.child(`${name}`);
+    const dbName = uuid();
+    const fileRef = storageRef.child(dbName);
     try {
       const uploadedFile = await fileRef.put(file);
       const fileURL = await uploadedFile.ref.getDownloadURL();
@@ -124,12 +140,33 @@ export const AppContextProvider: FC<Props> = ({ children }) => {
         folderId: folder.id,
         fileURL,
         user: user.dbId,
-        dbName: "",
+        dbName,
         timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
       setUploadStatus("SUCCESS");
     } catch (error: any) {
       setUploadStatus("ERROR");
+      console.log(error.message);
+    }
+  };
+
+  const renameFile = async ({ fileId, name }: RenameFileType) => {
+    if (!name || !fileId || !user) return;
+    try {
+      await db.collection("files").doc(fileId).update({ name });
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
+
+  const deleteFile = async ({ fileId, fileName }: DeleteFileType) => {
+    if (!fileId || !fileName) return;
+    try {
+      await db.collection("files").doc(fileId).delete();
+      const storageRef = storageBucket.ref();
+      const fileRef = storageRef.child(`${fileName}`);
+      await fileRef.delete();
+    } catch (error: any) {
       console.log(error.message);
     }
   };
@@ -144,8 +181,10 @@ export const AppContextProvider: FC<Props> = ({ children }) => {
         return deleteFolder(payload);
       case "UPLOADFILE":
         return uploadFile(payload);
-      // TODO: Delete File
-      // TODO: Rename File
+      case "RENAMEFILE":
+        return renameFile(payload as RenameFileType);
+      case "DELETEFILE":
+        return deleteFile(payload as DeleteFileType);
     }
   };
 
