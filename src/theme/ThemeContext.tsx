@@ -37,13 +37,15 @@ export const ThemeContextProvider: FC<Props> = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{ isDark, setIsDark }}>
-      <AuthContextProvider>
-        <AppContextProvider>
-          <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-            <BrowserRouter>{children}</BrowserRouter>
-          </ThemeProvider>
-        </AppContextProvider>
-      </AuthContextProvider>
+      <BrowserRouter>
+        <AuthContextProvider>
+          <AppContextProvider>
+            <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+              {children}
+            </ThemeProvider>
+          </AppContextProvider>
+        </AuthContextProvider>
+      </BrowserRouter>
     </ThemeContext.Provider>
   );
 };

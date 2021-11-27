@@ -96,8 +96,8 @@ export const ManageFolders = () => {
                   </Button>
                 </Grid>
                 {folderNames &&
-                  folderNames.map((folderName) => (
-                    <Grid item xs={12} key={folderName.id}>
+                  folderNames.map((folderName, idx) => (
+                    <Grid item xs={12} key={`${idx}`}>
                       <Box
                         display="flex"
                         justifyContent="space-between"

@@ -15,8 +15,10 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { AppContext } from "src/context/AppContext";
-import { FolderRounded } from "@material-ui/icons";
+import { AuthContext } from "src/context/AuthContext";
+import { FolderRounded, HomeRounded } from "@material-ui/icons";
 import { useNavigate } from "react-router";
+import { Button, Grid } from "@material-ui/core";
 
 const drawerWidth = 240;
 
@@ -67,6 +69,7 @@ export const TabbedHeader = () => {
   const [open, setOpen] = useState(false);
 
   const { folderNames } = useContext(AppContext);
+  const { AuthState } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => setOpen(true);
@@ -74,6 +77,13 @@ export const TabbedHeader = () => {
   const handleListItemClick = (name: string, id: string) => {
     name === "Home" ? navigate("/home") : navigate(`/folder/${id}`);
     handleDrawerClose();
+  };
+
+  const handleSignOut = () => {
+    AuthState({
+      type: "SIGNOUT",
+      payload: null,
+    });
   };
 
   return (
@@ -86,20 +96,29 @@ export const TabbedHeader = () => {
         })}
         color="primary"
       >
-        <Toolbar variant="dense">
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton, open && classes.hide)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" color="inherit">
-            Drive
-          </Typography>
-        </Toolbar>
+        <Grid container>
+          <Grid item xs={8} sm={10} md={11}>
+            <Toolbar variant="dense">
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                className={clsx(classes.menuButton, open && classes.hide)}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" color="inherit">
+                Drive
+              </Typography>
+            </Toolbar>
+          </Grid>
+          <Grid item xs={4} sm={2} md={1} style={{ marginTop: "5px" }}>
+            <Button color="inherit" onClick={() => handleSignOut()}>
+              Sign Out
+            </Button>
+          </Grid>
+        </Grid>
       </AppBar>
       <Drawer
         className={classes.drawer}
@@ -127,11 +146,11 @@ export const TabbedHeader = () => {
             ].map((folder) => (
               <ListItem
                 button
-                key={folder.name}
+                key={folder.id}
                 onClick={() => handleListItemClick(folder.name, folder.id)}
               >
                 <ListItemIcon>
-                  <FolderRounded />
+                  {folder.id === "home" ? <HomeRounded /> : <FolderRounded />}
                 </ListItemIcon>
                 <ListItemText primary={folder.name} />
               </ListItem>

@@ -6,8 +6,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { SignUp } from "./pages/SignUp";
 import { Folder } from "./pages/Folder";
 
-// TODO: Search File
-// TODO: Logout User
+// TODO: Download File
 
 export const App = () => {
   const { user } = useContext(AuthContext);
@@ -30,12 +29,15 @@ export const App = () => {
       />
       <Route
         path="/signin"
-        element={user ? <Navigate replace to="/" /> : <SignIn />}
+        element={user !== null ? <Navigate replace to="/" /> : <SignIn />}
       />
-      <Route path="/signup" element={user ? <Navigate to="/" /> : <SignUp />} />
+      <Route
+        path="/signup"
+        element={user ? <Navigate replace to="/" /> : <SignUp />}
+      />
       <Route
         path="/folder/:id"
-        element={user ? <Folder /> : <Navigate to="/" />}
+        element={user ? <Folder /> : <Navigate replace to="/" />}
       />
     </Routes>
   );

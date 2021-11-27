@@ -58,7 +58,7 @@ export const SignUp = () => {
           <Container maxWidth="sm">
             <form>
               <Grid container spacing={1}>
-                <Grid xs={12}>
+                <Grid item xs={12}>
                   <Typography
                     variant="h4"
                     color="textPrimary"

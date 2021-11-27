@@ -19,7 +19,7 @@ interface LoginUserType {
 }
 
 interface AuthStateType {
-  type: "SIGNUP" | "SIGNIN" | "SIGNOUT" | "SETUSERID";
+  type: "SIGNUP" | "SIGNIN" | "SIGNOUT";
   payload: SignUpUserType | LoginUserType | null;
 }
 
@@ -42,8 +42,8 @@ export const AuthContextProvider: FC<AuthContextProps> = ({ children }) => {
       await auth.createUserWithEmailAndPassword(email, password);
       await auth.currentUser?.updateProfile({ displayName: name });
       const dbUser = await db.collection("users").add({
-        name,
-        email,
+        name: name.toLowerCase(),
+        email: email.toLowerCase(),
       });
       setUser({
         dbId: dbUser.id,
@@ -68,22 +68,13 @@ export const AuthContextProvider: FC<AuthContextProps> = ({ children }) => {
     }
   };
 
-  const signOutUser = () => {
-    auth.signOut();
-    setUser(null);
-  };
-
-  const setUserId = async () => {
-    const dataUser = await db
-      .collection("users")
-      .where("email", "==", user?.email)
-      .get();
-    const data = dataUser.docs[0].id;
-    setUser({
-      dbId: data,
-      name: user?.name,
-      email: user?.email,
-    });
+  const signOutUser = async () => {
+    try {
+      setUser(null);
+      await auth.signOut();
+    } catch (error: any) {
+      console.log(error.message);
+    }
   };
 
   const AuthState = ({ type, payload }: AuthStateType) => {
@@ -94,17 +85,21 @@ export const AuthContextProvider: FC<AuthContextProps> = ({ children }) => {
         return signInUser(payload as LoginUserType);
       case "SIGNOUT":
         return signOutUser();
-      case "SETUSERID":
-        return setUserId();
     }
   };
 
   useEffect(() => {
-    auth.onAuthStateChanged((authUser) => {
-      if (!authUser) return;
+    auth.onAuthStateChanged(async (authUser) => {
+      if (!authUser) return setUser(null);
+      const dataUser = await db
+        .collection("users")
+        .where("email", "==", authUser?.email)
+        .get();
+      const data = dataUser.docs[0].id;
       setUser({
-        name: authUser.displayName,
-        email: authUser.email,
+        dbId: data,
+        name: authUser?.displayName,
+        email: authUser?.email,
       });
     });
   }, []);
