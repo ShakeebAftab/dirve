@@ -88,7 +88,12 @@ export const FolderTable: FC<Props> = ({ files }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <RenameFile open={open} setOpen={setOpen} fileId={fileId} />
+      <RenameFile
+        open={open}
+        setOpen={setOpen}
+        fileId={fileId}
+        isFolder={false}
+      />
     </>
   );
 };

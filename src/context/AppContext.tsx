@@ -20,6 +20,10 @@ interface RenameFileType {
   name: string;
 }
 
+interface DeleteFolderType {
+  folderId: string;
+}
+
 type UploadStatusType = "ERROR" | "ONGOING" | "SUCCESS";
 
 interface DeleteFileType {
@@ -35,7 +39,12 @@ interface AppStateType {
     | "UPLOADFILE"
     | "RENAMEFILE"
     | "DELETEFILE";
-  payload: any | CreateNewFolderType | RenameFileType | DeleteFileType;
+  payload:
+    | any
+    | CreateNewFolderType
+    | RenameFileType
+    | DeleteFileType
+    | DeleteFolderType;
 }
 
 interface FolderType {
@@ -85,9 +94,8 @@ export const AppContextProvider: FC<Props> = ({ children }) => {
     if (folderExists) return;
     // TODO: Error Handling
     const newFolder = await db.collection("folders").add({
-      totItems: 0,
       folderName: name,
-      user: user?.dbId,
+      user: user.dbId,
       timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
     setFolders((folders) =>
@@ -108,8 +116,34 @@ export const AppContextProvider: FC<Props> = ({ children }) => {
     );
   };
 
-  const renameFolder = ({ id, newName }: any) => {};
-  const deleteFolder = ({ id }: any) => {};
+  const renameFolder = async ({ fileId, name }: RenameFileType) => {
+    if (!fileId || !name || !user) return;
+    try {
+      await db.collection("folders").doc(fileId).update({ folderName: name });
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
+
+  const deleteFolder = async ({ folderId }: DeleteFolderType) => {
+    if (!folderId || !user) return;
+    try {
+      const data = await db
+        .collection("files")
+        .where("user", "==", user.dbId)
+        .where("folderId", "==", folderId)
+        .get();
+      data.docs.forEach((doc) => {
+        deleteFile({
+          fileId: doc.id,
+          fileName: doc.data().dbName,
+        });
+      });
+      await db.collection("folders").doc(folderId).delete();
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
 
   interface UploadFileType {
     name: string;
@@ -176,9 +210,9 @@ export const AppContextProvider: FC<Props> = ({ children }) => {
       case "CREATEFOLDER":
         return createNewFolder(payload as CreateNewFolderType);
       case "RENAMEFOLDER":
-        return renameFolder(payload);
+        return renameFolder(payload as RenameFileType);
       case "DELETEFOLDER":
-        return deleteFolder(payload);
+        return deleteFolder(payload as DeleteFolderType);
       case "UPLOADFILE":
         return uploadFile(payload);
       case "RENAMEFILE":

@@ -29,14 +29,20 @@ const useStyles = makeStyles((theme: Theme) =>
 interface Props {
   open: boolean;
   setOpen: Dispatch<boolean>;
-  fileId: string;
-  isFolder: boolean;
+  folderId: string;
+  folderName: string;
 }
 
-export const RenameFile: FC<Props> = ({ open, setOpen, fileId, isFolder }) => {
+export const DeleteFolder: FC<Props> = ({
+  open,
+  setOpen,
+  folderId,
+  folderName,
+}) => {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
   const [name, setName] = useState("");
+  const [error, setError] = useState(false);
 
   const { AppState } = useContext(AppContext);
 
@@ -44,12 +50,10 @@ export const RenameFile: FC<Props> = ({ open, setOpen, fileId, isFolder }) => {
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
+    if (name !== folderName) return setError(true);
     AppState({
-      type: isFolder ? "RENAMEFOLDER" : "RENAMEFILE",
-      payload: {
-        fileId,
-        name,
-      },
+      type: "DELETEFOLDER",
+      payload: { folderId },
     });
     setName("");
     handleClose();
@@ -68,16 +72,23 @@ export const RenameFile: FC<Props> = ({ open, setOpen, fileId, isFolder }) => {
             <Box padding="20px">
               <Grid container spacing={1}>
                 <Grid item xs={12}>
-                  <Typography variant="h6">
-                    Rename {isFolder ? `Folder` : `File`}
+                  <Typography variant="h6">Delete Folder</Typography>
+                  <Typography variant="body2">
+                    All the files in the folder will also be deleted with the
+                    folder
                   </Typography>
                 </Grid>
+                {error && (
+                  <Grid item xs={12}>
+                    <Typography variant="body1" color="error">
+                      Please enter the {folderName} correctly
+                    </Typography>
+                  </Grid>
+                )}
                 <Grid item xs={12}>
                   <TextField
                     label="Name"
-                    placeholder={`Please enter the new ${
-                      isFolder ? "folder" : "file"
-                    } name`}
+                    placeholder={`Please enter "${folderName}" to delete it`}
                     fullWidth
                     variant="outlined"
                     size="small"
@@ -94,7 +105,7 @@ export const RenameFile: FC<Props> = ({ open, setOpen, fileId, isFolder }) => {
                     type="submit"
                     onClick={(e) => handleSubmit(e)}
                   >
-                    Rename
+                    Delete
                   </Button>
                 </Grid>
               </Grid>

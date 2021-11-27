@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext, useState } from "react";
 import clsx from "clsx";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -64,13 +64,17 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const TabbedHeader = () => {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const { folderNames } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
+  const handleListItemClick = (name: string, id: string) => {
+    name === "Home" ? navigate("/home") : navigate(`/folder/${id}`);
+    handleDrawerClose();
+  };
 
   return (
     <div className={classes.root}>
@@ -124,11 +128,7 @@ export const TabbedHeader = () => {
               <ListItem
                 button
                 key={folder.name}
-                onClick={() =>
-                  folder.name === "Home"
-                    ? navigate("/home")
-                    : navigate(`/folder/${folder.id}`)
-                }
+                onClick={() => handleListItemClick(folder.name, folder.id)}
               >
                 <ListItemIcon>
                   <FolderRounded />
