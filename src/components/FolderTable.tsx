@@ -7,7 +7,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { FC } from "react";
-import { Button, Typography } from "@material-ui/core";
+import { Box, Button, TextField, Typography } from "@material-ui/core";
 import { AppContext } from "src/context/AppContext";
 import { RenameFile } from "./RenameFile";
 
@@ -28,7 +28,10 @@ export const FolderTable: FC<Props> = ({ files }) => {
   const classes = useStyles();
 
   const [fileId, setFileId] = useState("");
+  const [searchFiles, setSearchFiles] = useState<any[]>([]);
+  const [searchFlag, setSearchFlag] = useState(false);
   const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
 
   const { AppState } = useContext(AppContext);
 
@@ -47,12 +50,36 @@ export const FolderTable: FC<Props> = ({ files }) => {
     setOpen(true);
   };
 
+  const handleChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setName(e.target.value);
+    if (e.target.value === "") return setSearchFlag(false);
+    setSearchFlag(true);
+    setSearchFiles(() =>
+      files.filter((file) =>
+        file.name.toLowerCase().includes(e.target.value.toLowerCase())
+      )
+    );
+  };
+
   return (
     <>
+      <Box p="20px">
+        <TextField
+          variant="outlined"
+          fullWidth
+          label="Search"
+          placeholder="Please enter the file name"
+          size="small"
+          value={name}
+          onChange={(e) => handleChange(e)}
+        />
+      </Box>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableBody>
-            {files.map((file: any) => (
+            {(searchFlag ? searchFiles : files).map((file: any) => (
               <TableRow key={file.id}>
                 <TableCell component="th" scope="row">
                   <Typography variant="body1" color="textPrimary">

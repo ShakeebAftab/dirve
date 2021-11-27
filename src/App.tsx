@@ -6,8 +6,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { SignUp } from "./pages/SignUp";
 import { Folder } from "./pages/Folder";
 
-// TODO: Delete Folder
-// TODO: Download File
 // TODO: Search File
 // TODO: Logout User
 
