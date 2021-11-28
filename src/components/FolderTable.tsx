@@ -10,6 +10,7 @@ import { FC } from "react";
 import { Box, Button, TextField, Typography } from "@material-ui/core";
 import { AppContext } from "src/context/AppContext";
 import { RenameFile } from "./RenameFile";
+import saveAs from "file-saver";
 
 const useStyles = makeStyles({
   table: {
@@ -63,6 +64,11 @@ export const FolderTable: FC<Props> = ({ files }) => {
     );
   };
 
+  const handleDownload = (url: string, name: string) => {
+    console.log(name);
+    saveAs(url, name);
+  };
+
   return (
     <>
       <Box p="20px">
@@ -90,7 +96,11 @@ export const FolderTable: FC<Props> = ({ files }) => {
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Button variant="outlined" color="primary">
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => handleDownload(file.fileURL, file.name)}
+                  >
                     Download
                   </Button>
                   <Button
