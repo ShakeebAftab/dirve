@@ -101,8 +101,8 @@ export const ManageFolders = () => {
                       <Box
                         display="flex"
                         justifyContent="space-between"
-                        borderColor="#808080"
-                        borderBottom="1px solid black"
+                        // borderColor={isDark ? "#6b6b6b" : "#6b6b6b"}
+                        borderBottom="1px solid #6b6b6b"
                         p="5px"
                         overflow="scroll"
                       >

@@ -18,7 +18,8 @@ import { AppContext } from "src/context/AppContext";
 import { AuthContext } from "src/context/AuthContext";
 import { FolderRounded, HomeRounded } from "@material-ui/icons";
 import { useNavigate } from "react-router";
-import { Button, Grid } from "@material-ui/core";
+import { Box, Button, Grid } from "@material-ui/core";
+import { ThemeContext } from "src/theme/ThemeContext";
 
 const drawerWidth = 240;
 
@@ -61,6 +62,9 @@ const useStyles = makeStyles((theme: Theme) =>
       ...theme.mixins.toolbar,
       justifyContent: "flex-end",
     },
+    gridItem: {
+      marginTop: "6px",
+    },
   })
 );
 
@@ -70,6 +74,7 @@ export const TabbedHeader = () => {
 
   const { folderNames } = useContext(AppContext);
   const { AuthState } = useContext(AuthContext);
+  const { isDark, setIsDark } = useContext(ThemeContext);
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => setOpen(true);
@@ -89,15 +94,9 @@ export const TabbedHeader = () => {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar
-        position="static"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
-        color="primary"
-      >
+      <AppBar position="static" className={classes.appBar} color="primary">
         <Grid container>
-          <Grid item xs={8} sm={10} md={11}>
+          <Grid item xs={5} sm={8} md={10}>
             <Toolbar variant="dense">
               <IconButton
                 color="inherit"
@@ -113,10 +112,15 @@ export const TabbedHeader = () => {
               </Typography>
             </Toolbar>
           </Grid>
-          <Grid item xs={4} sm={2} md={1} style={{ marginTop: "5px" }}>
-            <Button color="inherit" onClick={() => handleSignOut()}>
-              Sign Out
-            </Button>
+          <Grid item xs={7} sm={4} md={2} className={classes.gridItem}>
+            <Box>
+              <Button color="inherit" onClick={() => handleSignOut()}>
+                Sign Out
+              </Button>
+              <Button color="inherit" onClick={() => setIsDark(!isDark)}>
+                {isDark ? "Light Mode" : "Dark Mode"}
+              </Button>
+            </Box>
           </Grid>
         </Grid>
       </AppBar>

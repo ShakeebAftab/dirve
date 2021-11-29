@@ -21,13 +21,13 @@ Cloud drive to store your files on the go
 - Delete files or folders
 - Search files in the folder
 - Fully responsive
+- Toggle between light and dark theme
 
 ## Future Plans
 
-- Dark theme
 - Multi-file uplaods
 - Filters for searching files
-- Btter downloading experiance
+- Better downloading experiance
 - Better error handling
 - More typescript support
 
