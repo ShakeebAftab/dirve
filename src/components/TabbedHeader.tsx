@@ -96,7 +96,7 @@ export const TabbedHeader = () => {
       <CssBaseline />
       <AppBar position="static" className={classes.appBar} color="primary">
         <Grid container>
-          <Grid item xs={5} sm={8} md={10}>
+          <Grid item xs={5} sm={8} md={9}>
             <Toolbar variant="dense">
               <IconButton
                 color="inherit"
@@ -112,7 +112,7 @@ export const TabbedHeader = () => {
               </Typography>
             </Toolbar>
           </Grid>
-          <Grid item xs={7} sm={4} md={2} className={classes.gridItem}>
+          <Grid item xs={7} sm={4} md={3} className={classes.gridItem}>
             <Box>
               <Button color="inherit" onClick={() => handleSignOut()}>
                 Sign Out
