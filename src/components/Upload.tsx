@@ -18,6 +18,7 @@ import { FolderSelector } from "./FolderSelector";
 // Static
 import fileIcon from "../static/fileIcon.png";
 import { AppContext } from "src/context/AppContext";
+import { ThemeContext } from "src/theme/ThemeContext";
 
 const useStyles = makeStyles({
   paper: {
@@ -40,6 +41,7 @@ export const Upload = () => {
   const classes = useStyles();
 
   const { AppState, folderNames, uploadStatus } = useContext(AppContext);
+  const { isDark } = useContext(ThemeContext);
 
   // State
   const [name, setName] = useState("");
@@ -147,7 +149,7 @@ export const Upload = () => {
                         display="flex"
                         p="20px"
                         borderRadius={25}
-                        style={{ background: "#ededed" }}
+                        style={{ background: isDark ? "#3b3b3b" : "#ededed" }}
                         textOverflow="wrap"
                         overflow="scroll"
                       >

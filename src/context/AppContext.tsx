@@ -88,7 +88,7 @@ export const AppContextProvider: FC<Props> = ({ children }) => {
   }, [user?.dbId]);
 
   const createNewFolder = async ({ name }: CreateNewFolderType) => {
-    if (!user) return;
+    if (!user || !name) return;
     let folderExists = false;
     folders?.forEach((folder) => folder.name === name && (folderExists = true));
     if (folderExists) return;
